@@ -1,3 +1,4 @@
 {
-    "publish-delay-hours": 1
+    "end-of-life": "GitAhead is unmaintained and eclipsed in functionality by Gittyup",
+    "end-of-life-rebase": "com.github.Murmele.Gittyup"
 }
