@@ -1,7 +1,7 @@
 {
   "app-id": "io.github.gitahead.GitAhead",
   "runtime": "org.kde.Platform",
-  "runtime-version": "5.15-21.08",
+  "runtime-version": "6.6",
   "sdk": "org.kde.Sdk",
   "command": "gitahead",
   "separate-locales": false,
@@ -10,16 +10,18 @@
     "--socket=x11",
     "--socket=wayland",
     "--device=dri",
-    /*for git repos that require ssh keys*/
     "--socket=ssh-auth",
     "--share=network",
     "--socket=pcsc",
-    /*we want access to all files under home*/
     "--filesystem=home",
-    /*we use the keyring to store credentials*/
     "--filesystem=xdg-run/keyring",
     "--talk-name=org.freedesktop.secrets",
     "--talk-name=org.freedesktop.Notifications"
+  ],
+  "cleanup": [
+    "/include",
+    "/share",
+    "/lib/pkgconfig"
   ],
   "modules": [
     "shared-modules/libsecret/libsecret.json",
@@ -28,44 +30,25 @@
       "name": "git",
       "buildsystem": "simple",
       "build-commands": [
-        "install -Dm0755 $(which git) /app/bin/",
-        "install -Dm0755 $(which git-cvsserver) /app/bin/",
-        "install -Dm0755 $(which git-receive-pack) /app/bin/",
-        "install -Dm0755 $(which git-shell) /app/bin/",
-        "install -Dm0755 $(which git-upload-archive) /app/bin/",
-        "install -Dm0755 $(which git-upload-pack) /app/bin/"
+        "make -j ${FLATPAK_BUILDER_N_JOBS} prefix=/app install"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/git/git.git",
+          "tag": "v2.43.0",
+          "commit": "564d0252ca632e0264ed670534a51d18a689ef5d"
+        }
       ]
     },
     {
       "name": "graphviz",
-      "cleanup": [
-        "/share/man",
-        "/share/graphviz/doc"
-      ],
       "sources": [
         {
           "type": "archive",
-          "url": "https://gitlab.com/graphviz/graphviz/-/archive/5.0.0/graphviz-5.0.0.tar.gz",
-          "sha256": "f8cc576694ae93659f453b6b4a4c2f04572a90cfccdca2d4271f2e7c60bb3d60"
+          "url": "https://gitlab.com/graphviz/graphviz/-/archive/9.0.0/graphviz-9.0.0.tar.gz",
+          "sha256": "504d19b5d0e5398a57e9d9de42393f90b9e79aff0969b4ebc3b891ccb39602ed"
         }
-      ]
-    },
-    {
-      "name": "libgnome-keyring",
-      "buildsystem": "autotools",
-      "config-opts": [
-        "--enable-vala=no",
-        "--enable-introspection=no"
-      ],
-      "sources": [
-        {
-          "type": "archive",
-          "url": "https://download-fallback.gnome.org/sources/libgnome-keyring/3.12/libgnome-keyring-3.12.0.tar.xz",
-          "sha256": "c4c178fbb05f72acc484d22ddb0568f7532c409b0a13e06513ff54b91e947783"
-        }
-      ],
-      "cleanup":[
-        "/share/gtk-doc"
       ]
     },
     {
@@ -92,11 +75,8 @@
         {
           "type": "git",
           "url": "https://github.com/gitahead/gitahead.git",
-          "commit":"bb747caef098140d9674990b1d79d096d1eac8df"
-        },
-        {
-          "type": "patch",
-          "path": "gitahead.patch"
+          "tag": "v2.7.1",
+          "commit": "af959bff3b6de4102eccb6bd401519a9dc01b969"
         },
         {
           "type": "script",
