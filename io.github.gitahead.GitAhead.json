@@ -1,25 +1,34 @@
 {
   "app-id": "io.github.gitahead.GitAhead",
   "runtime": "org.kde.Platform",
-  "runtime-version": "5.15-21.08",
+  "runtime-version": "6.6",
   "sdk": "org.kde.Sdk",
-  "command": "gitahead",
+  "command": "GitAhead",
   "separate-locales": false,
   "finish-args": [
     "--share=ipc",
     "--socket=x11",
     "--socket=wayland",
     "--device=dri",
-    /*for git repos that require ssh keys*/
     "--socket=ssh-auth",
     "--share=network",
     "--socket=pcsc",
-    /*we want access to all files under home*/
     "--filesystem=home",
-    /*we use the keyring to store credentials*/
     "--filesystem=xdg-run/keyring",
     "--talk-name=org.freedesktop.secrets",
     "--talk-name=org.freedesktop.Notifications"
+  ],
+  "cleanup": [
+    "/include",
+    "/share/aclocal",
+    "/share/git",
+    "/share/git-*",
+    "/share/gitk",
+    "/share/gitweb",
+    "/share/man",
+    "/share/perl5",
+    "/libexec",
+    "/lib/pkgconfig"
   ],
   "modules": [
     "shared-modules/libsecret/libsecret.json",
@@ -28,82 +37,52 @@
       "name": "git",
       "buildsystem": "simple",
       "build-commands": [
-        "install -Dm0755 $(which git) /app/bin/",
-        "install -Dm0755 $(which git-cvsserver) /app/bin/",
-        "install -Dm0755 $(which git-receive-pack) /app/bin/",
-        "install -Dm0755 $(which git-shell) /app/bin/",
-        "install -Dm0755 $(which git-upload-archive) /app/bin/",
-        "install -Dm0755 $(which git-upload-pack) /app/bin/"
-      ]
-    },
-    {
-      "name": "graphviz",
-      "cleanup": [
-        "/share/man",
-        "/share/graphviz/doc"
+        "make -j ${FLATPAK_BUILDER_N_JOBS} prefix=/app install"
       ],
       "sources": [
         {
-          "type": "archive",
-          "url": "https://gitlab.com/graphviz/graphviz/-/archive/5.0.0/graphviz-5.0.0.tar.gz",
-          "sha256": "f8cc576694ae93659f453b6b4a4c2f04572a90cfccdca2d4271f2e7c60bb3d60"
+          "type": "git",
+          "url": "https://github.com/git/git.git",
+          "tag": "v2.43.0",
+          "commit": "564d0252ca632e0264ed670534a51d18a689ef5d"
         }
-      ]
-    },
-    {
-      "name": "libgnome-keyring",
-      "buildsystem": "autotools",
-      "config-opts": [
-        "--enable-vala=no",
-        "--enable-introspection=no"
-      ],
-      "sources": [
-        {
-          "type": "archive",
-          "url": "https://download-fallback.gnome.org/sources/libgnome-keyring/3.12/libgnome-keyring-3.12.0.tar.xz",
-          "sha256": "c4c178fbb05f72acc484d22ddb0568f7532c409b0a13e06513ff54b91e947783"
-        }
-      ],
-      "cleanup":[
-        "/share/gtk-doc"
       ]
     },
     {
       "name": "gitahead",
-      "buildsystem": "cmake-ninja",
+      "buildsystem": "simple",
       "builddir": true,
-      "build-options": {
-        "prefix": "/app/gitahead"
-      },
+      "build-commands": [
+        "sed -i '8d' dep/libgit2/libgit2/tests/headertest/headertest.c",
+        "cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/app -Wno-dev -GNinja -B build",
+        "cmake --build build -j ${FLATPAK_BUILDER_N_JOBS}",
+        "cmake --build build -j ${FLATPAK_BUILDER_N_JOBS} --target package",
+        "mkdir -p /app/{share,bin}",
+        "cp -r build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1 /app/share/gitahead",
+        "rm -rf /app/share/gitahead/*.so.*",
+        "ln -s /app/share/gitahead/GitAhead /app/bin",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_512x512.png /app/share/icons/hicolor/512x512/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_256x256.png /app/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_128x128.png /app/share/icons/hicolor/128x128/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_64x64.png /app/share/icons/hicolor/64x64/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_32x32.png /app/share/icons/hicolor/32x32/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_16x16.png /app/share/icons/hicolor/16x16/apps/$FLATPAK_ID.png"
+      ],
       "cleanup": [
         "/gitahead/*.so*",
         "/gitahead/include",
         "/gitahead/lib"
       ],
       "post-install": [
-        "install -Dm755 ../gitahead.sh /app/bin/gitahead",
-        "install -Dm644 /app/gitahead/Resources/GitAhead.iconset/icon_512x512.png /app/share/icons/hicolor/512x512/apps/$FLATPAK_ID.png",
-        "install -Dm644 /app/gitahead/Resources/GitAhead.iconset/icon_128x128.png /app/share/icons/hicolor/128x128/apps/$FLATPAK_ID.png",
-        "install -Dm644 /app/gitahead/Resources/GitAhead.iconset/icon_256x256.png /app/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png",
-        "install -D ../io.github.gitahead.GitAhead.metainfo.xml -t /app/share/metainfo/",
-        "install -D ../io.github.gitahead.GitAhead.desktop -t /app/share/applications/"
+        "install -D io.github.gitahead.GitAhead.metainfo.xml -t /app/share/metainfo/",
+        "install -D io.github.gitahead.GitAhead.desktop -t /app/share/applications/"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/gitahead/gitahead.git",
-          "commit":"bb747caef098140d9674990b1d79d096d1eac8df"
-        },
-        {
-          "type": "patch",
-          "path": "gitahead.patch"
-        },
-        {
-          "type": "script",
-          "commands": [
-            "exec /app/gitahead/GitAhead $@"
-          ],
-          "dest-filename": "gitahead.sh"
+          "tag": "v2.7.1",
+          "commit": "af959bff3b6de4102eccb6bd401519a9dc01b969"
         },
         {
           "type": "file",

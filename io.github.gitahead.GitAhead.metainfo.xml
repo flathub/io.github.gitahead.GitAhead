@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>io.github.gitahead.GitAhead</id>
-  
+
   <name>GitAhead</name>
   <summary>Understand your Git history!</summary>
-  
+
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   <url type="homepage">https://gitahead.github.io/gitahead.com/</url>
@@ -13,19 +13,23 @@
     <control>keyboard</control>
     <control>touch</control>
   </recommends>
-  
+
   <description>
     <p>
-      GitAhead is a graphical Git client for Windows, Linux and macOS. It features a fast native interface designed to help you understand and manage your source code history.
+      GitAhead is a graphical Git client for Windows, Linux and macOS. It features a fast native
+      interface designed to help you understand and manage your source code history.
     </p>
     <p>
-      GitAhead was designed by SciTools™, the makers of Understand™. It has all of the features you expect from a commercial quality client, now completely free and open source.
+      GitAhead was designed by SciTools™, the makers of Understand™. It has all of the features you
+      expect from a commercial quality client, now completely free and open source.
     </p>
     <p>
-      Git provides a wealth of historical information that, too often, goes unexploited because it&apos;s cumbersome to explore with other tools. We believe that when you understand your history you&apos;ll make better choices today!
+      Git provides a wealth of historical information that, too often, goes unexploited because
+      it&apos;s cumbersome to explore with other tools. We believe that when you understand your
+      history you&apos;ll make better choices today!
     </p>
   </description>
-  
+
   <launchable type="desktop-id">io.github.gitahead.GitAhead.desktop</launchable>
   <screenshots>
     <screenshot type="default">
@@ -34,15 +38,17 @@
   </screenshots>
   <content_rating type="oars-1.0" />
   <releases>
-        <release version="2.6.3" date="2020-7-14">
-        <description>
-            <p>added</p>
-            <p>Added external tool definitions for Beyond Compare 4. (Stefan Knotzer)</p>
-            <p>Added option to disable translation. (Stefan Knotzer)</p>
-            <p>Added options to delete branches and tags from the commit list context menu. (Stefan Knotzer)</p>
-            <p>Added button to the clone dialog to navigate to a local directory. (Stefan Knotzer)</p>
-            <p>Added Brazilian Portuguese translation. (Francisco)</p>
-        </description>
-        </release>
-    </releases>
+    <release version="2.6.3" date="2020-7-14">
+      <description>
+        <p>added</p>
+        <p>Added external tool definitions for Beyond Compare 4. (Stefan Knotzer)</p>
+        <p>Added option to disable translation. (Stefan Knotzer)</p>
+        <p>Added options to delete branches and tags from the commit list context menu. (Stefan
+          Knotzer)</p>
+        <p>Added button to the clone dialog to navigate to a local directory. (Stefan Knotzer)</p>
+        <p>Added Brazilian Portuguese translation. (Francisco)</p>
+      </description>
+    </release>
+    <release version="v2.7.1" date="2023-12-22" />
+  </releases>
 </component>

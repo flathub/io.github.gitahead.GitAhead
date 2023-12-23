@@ -1,4 +1,3 @@
 {
-    "end-of-life": "GitAhead is unmaintained and eclipsed in functionality by Gittyup",
-    "end-of-life-rebase": "com.github.Murmele.Gittyup"
+    "end-of-life": "GitAhead is in maintaince only mode and will not recive new features, it is recomended that you should use a fork"
 }
