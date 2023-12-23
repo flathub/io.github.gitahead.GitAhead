@@ -3,7 +3,7 @@
   "runtime": "org.kde.Platform",
   "runtime-version": "6.6",
   "sdk": "org.kde.Sdk",
-  "command": "gitahead",
+  "command": "GitAhead",
   "separate-locales": false,
   "finish-args": [
     "--share=ipc",
@@ -20,7 +20,14 @@
   ],
   "cleanup": [
     "/include",
-    "/share",
+    "/share/aclocal",
+    "/share/git",
+    "/share/git-*",
+    "/share/gitk",
+    "/share/gitweb",
+    "/share/man",
+    "/share/perl5",
+    "/libexec",
     "/lib/pkgconfig"
   ],
   "modules": [
@@ -42,34 +49,33 @@
       ]
     },
     {
-      "name": "graphviz",
-      "sources": [
-        {
-          "type": "archive",
-          "url": "https://gitlab.com/graphviz/graphviz/-/archive/9.0.0/graphviz-9.0.0.tar.gz",
-          "sha256": "504d19b5d0e5398a57e9d9de42393f90b9e79aff0969b4ebc3b891ccb39602ed"
-        }
-      ]
-    },
-    {
       "name": "gitahead",
-      "buildsystem": "cmake-ninja",
+      "buildsystem": "simple",
       "builddir": true,
-      "build-options": {
-        "prefix": "/app/gitahead"
-      },
+      "build-commands": [
+        "sed -i '8d' dep/libgit2/libgit2/tests/headertest/headertest.c",
+        "cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/app -Wno-dev -GNinja -B build",
+        "cmake --build build -j ${FLATPAK_BUILDER_N_JOBS}",
+        "cmake --build build -j ${FLATPAK_BUILDER_N_JOBS} --target package",
+        "mkdir -p /app/{share,bin}",
+        "cp -r build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1 /app/share/gitahead",
+        "rm -rf /app/share/gitahead/*.so.*",
+        "ln -s /app/share/gitahead/GitAhead /app/bin",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_512x512.png /app/share/icons/hicolor/512x512/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_256x256.png /app/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_128x128.png /app/share/icons/hicolor/128x128/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_64x64.png /app/share/icons/hicolor/64x64/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_32x32.png /app/share/icons/hicolor/32x32/apps/$FLATPAK_ID.png",
+        "install -Dm644 build/_CPack_Packages/Linux/STGZ/GitAhead-2.7.1/Resources/GitAhead.iconset/icon_16x16.png /app/share/icons/hicolor/16x16/apps/$FLATPAK_ID.png"
+      ],
       "cleanup": [
         "/gitahead/*.so*",
         "/gitahead/include",
         "/gitahead/lib"
       ],
       "post-install": [
-        "install -Dm755 ../gitahead.sh /app/bin/gitahead",
-        "install -Dm644 /app/gitahead/Resources/GitAhead.iconset/icon_512x512.png /app/share/icons/hicolor/512x512/apps/$FLATPAK_ID.png",
-        "install -Dm644 /app/gitahead/Resources/GitAhead.iconset/icon_128x128.png /app/share/icons/hicolor/128x128/apps/$FLATPAK_ID.png",
-        "install -Dm644 /app/gitahead/Resources/GitAhead.iconset/icon_256x256.png /app/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png",
-        "install -D ../io.github.gitahead.GitAhead.metainfo.xml -t /app/share/metainfo/",
-        "install -D ../io.github.gitahead.GitAhead.desktop -t /app/share/applications/"
+        "install -D io.github.gitahead.GitAhead.metainfo.xml -t /app/share/metainfo/",
+        "install -D io.github.gitahead.GitAhead.desktop -t /app/share/applications/"
       ],
       "sources": [
         {
@@ -77,13 +83,6 @@
           "url": "https://github.com/gitahead/gitahead.git",
           "tag": "v2.7.1",
           "commit": "af959bff3b6de4102eccb6bd401519a9dc01b969"
-        },
-        {
-          "type": "script",
-          "commands": [
-            "exec /app/gitahead/GitAhead $@"
-          ],
-          "dest-filename": "gitahead.sh"
         },
         {
           "type": "file",

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=GitAhead
 Comment=Understand your Git history!
-Exec=gitahead
+Exec=GitAhead
 Icon=io.github.gitahead.GitAhead
 Terminal=false
 Type=Application

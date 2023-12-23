@@ -38,7 +38,6 @@
   </screenshots>
   <content_rating type="oars-1.0" />
   <releases>
-    <release version="v2.7.1" data="2023-12-22" />
     <release version="2.6.3" date="2020-7-14">
       <description>
         <p>added</p>
@@ -50,5 +49,6 @@
         <p>Added Brazilian Portuguese translation. (Francisco)</p>
       </description>
     </release>
+    <release version="v2.7.1" date="2023-12-22" />
   </releases>
 </component>
